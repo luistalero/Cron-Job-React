@@ -1,0 +1,12 @@
+services:
+  react-cron-job:
+    container_name: react-cron-job
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3008:3008
+    volumes:
+      - ./src/src:/app/src
+      - /app/node_modules
