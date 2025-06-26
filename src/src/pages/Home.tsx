@@ -4,17 +4,14 @@ import Button from '../components/Button'
 const Home: React.FC = () => {
   const handleRegisterUser = () => {
     alert('Navegar a la pantalla de Registrar Usuario')
-    // Aquí puedes implementar la lógica de navegación
   }
 
   const handleScheduleEmail = () => {
     alert('Navegar a la pantalla de Programar Correo')
-    // Aquí puedes implementar la lógica de navegación
   }
 
   const handleListScheduledEmails = () => {
     alert('Navegar a la pantalla de Listar Correos Programados')
-    // Aquí puedes implementar la lógica de navegación
   }
 
   return (

@@ -1,28 +1,36 @@
-# Usa una imagen base de Node.js para construir la aplicación
-FROM node:20-alpine AS build
+# --- Etapa 1: Build de la aplicación React ---
+    FROM node:20-alpine AS build_stage
 
-# Establece el directorio de trabajo dentro del contenedor
-WORKDIR /app
-
-# Copia los archivos de definición de paquetes (package.json y package-lock.json/yarn.lock)
-# antes de copiar el resto del código. Esto optimiza el uso de la caché de Docker.
-COPY src/package*.json ./
-
-# Copia el resto del código de la aplicación
-COPY . .
-
-RUN npm install && npm cache clean --force
-
-# --- Segunda etapa: Sirve la aplicación con Nginx ---
-FROM nginx:alpine
-
-# Copia la configuración personalizada de Nginx (opcional, pero buena práctica)
-# Si no tienes un archivo nginx.conf personalizado, puedes omitir esta línea
-# y la línea que crea el archivo nginx.conf más abajo.
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expone el puerto 80 del contenedor
-EXPOSE 80
-
-# Comando para iniciar Nginx cuando el contenedor se ejecute
-CMD ["nginx", "-g", "daemon off;"]
+    # Establece el directorio de trabajo DENTRO de la carpeta 'src'
+    WORKDIR /app/src
+    
+    # Copia todo el contenido de tu carpeta 'src' local al WORKDIR del contenedor
+    # Esto incluye package.json, index.html, tu código React, etc.
+    COPY src/ .
+    
+    # Instala las dependencias
+    RUN npm install
+    
+    # Construye la aplicación para producción
+    # Esto generará la carpeta 'build' dentro de /app/src
+    RUN npm run build
+    
+    # --- Etapa 2: Servir con NGINX ---
+    FROM nginx:alpine
+    
+    # Copia el archivo de configuración de NGINX que creaste
+    # NGINX usará este archivo para saber cómo servir los archivos
+    COPY ngnix/nginx.conf /etc/nginx/nginx.conf
+    
+    # Elimina los archivos por defecto de NGINX para evitar conflictos
+    RUN rm -rf /usr/share/nginx/html/*
+    
+    # Copia los archivos compilados de la etapa de build a la ubicación que NGINX espera
+    # Los archivos están en /app/src/build en la etapa anterior (build_stage)
+    COPY --from=build_stage /app/src/build /usr/share/nginx/html
+    
+    # Expone el puerto por defecto de NGINX (80)
+    EXPOSE 80
+    
+    # Comando por defecto de NGINX para iniciar el servidor
+    CMD ["nginx", "-g", "daemon off;"]

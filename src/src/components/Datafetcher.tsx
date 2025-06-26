@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import axios, { AxiosError } from 'axios'
 
 interface BackendData {
+  id: number
+  name: string
   message: string
   service: string
   timestamp: string 

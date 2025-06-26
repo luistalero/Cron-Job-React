@@ -7,6 +7,8 @@ start:
 stop:
 	docker-compose stop
 
+log:
+	docker compose logs react-cron-job   
 down:
 	docker-compose down -v
 
