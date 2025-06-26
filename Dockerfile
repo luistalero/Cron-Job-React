@@ -21,9 +21,6 @@ FROM nginx:alpine
 # y la línea que crea el archivo nginx.conf más abajo.
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copia los archivos estáticos de la aplicación construida al directorio de Nginx
-COPY --from=build /app/build /usr/share/nginx/html
-
 # Expone el puerto 80 del contenedor
 EXPOSE 80
 
